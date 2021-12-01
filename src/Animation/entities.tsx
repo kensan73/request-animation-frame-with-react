@@ -171,13 +171,58 @@ const setup = (
   circle: Ref<HTMLDivElement>,
   leftPane: Ref<HTMLDivElement>,
   rightPane: Ref<HTMLDivElement>,
-  entities: Array<Array<AnimationEntity>>
+  entities: Array<Array<AnimationEntity>>,
+  originalEntities: Array<Array<AnimationEntity>>
+  // setState: (previousState: any) => any
 ) => {
+  // setState((previousState: any) => {
+  //   return {
+  //     ...previousState,
+  //     entities: [
+  //       [
+  //         {
+  //           ...previousState.entities[0][0],
+  //           element: circle,
+  //           step: originalEntities[0][0].step,
+  //         },
+  //         {
+  //           ...previousState.entities[0][1],
+  //           element: leftPane,
+  //           step: originalEntities[0][1].step,
+  //         },
+  //       ],
+  //       [
+  //         {
+  //           ...previousState.entities[1][0],
+  //           element: leftPane,
+  //           step: originalEntities[1][0].step,
+  //         },
+  //         {
+  //           ...previousState.entities[1][1],
+  //           element: rightPane,
+  //           step: originalEntities[1][1].step,
+  //         },
+  //       ],
+  //       [
+  //         {
+  //           ...previousState.entities[2][0],
+  //           element: rightPane,
+  //           step: originalEntities[2][0].step,
+  //         },
+  //       ],
+  //     ],
+  //   };
+  // });
   entities[0][0].element = circle;
+  entities[0][0].step = originalEntities[0][0].step;
   entities[0][1].element = leftPane;
+  entities[0][1].step = originalEntities[0][1].step;
   entities[1][0].element = leftPane;
+  entities[1][0].step = originalEntities[1][0].step;
   entities[1][1].element = rightPane;
+  entities[1][1].step = originalEntities[1][1].step;
   entities[2][0].element = rightPane;
+  entities[2][0].step = originalEntities[2][0].step;
 };
 
 export { entities, setup };

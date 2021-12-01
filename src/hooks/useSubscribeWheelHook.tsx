@@ -13,9 +13,12 @@ const useSubscribeWheelHook = (
       callback(content);
     };
 
-    window.addEventListener("wheel", throttle(onwheel, 1000));
+    window.addEventListener(
+      "wheel",
+      throttle((event) => onwheel(event), 3000)
+    );
 
-    return () => window.removeEventListener("wheel", onwheel);
+    return () => window.removeEventListener("wheel", (event) => onwheel(event));
   }, []);
 };
 

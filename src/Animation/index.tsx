@@ -1,62 +1,83 @@
 import { entities, setup } from "./entities";
-import React, { Ref, useRef, useState } from "react";
+import React, { Ref, useEffect, useRef, useState } from "react";
 import { runAnimation } from "./requestAnimationFrame";
 import useSubscribeWheelHook from "../hooks/useSubscribeWheelHook";
 import { circleStyle, panel0Style, panel1Style, sectionStyle } from "./styles";
+import { AnimationEntities } from "./interfaces";
 
 const Animation: React.FC = () => {
   const circleReference = useRef<HTMLDivElement>();
   const leftPaneReference = useRef<HTMLDivElement>();
   const rightPaneReference = useRef<HTMLDivElement>();
-  const animationEntities = JSON.parse(JSON.stringify(entities));
-  setup(
-    circleReference as Ref<HTMLDivElement>,
-    leftPaneReference as Ref<HTMLDivElement>,
-    rightPaneReference as Ref<HTMLDivElement>,
-    animationEntities.entities
+  const animationEntities = useRef<AnimationEntities>(
+    JSON.parse(JSON.stringify(entities))
   );
-  // const [animationEntities] = useState(entitiesCopy);
   const [triggerScroll, setTriggerScroll] = useState<undefined | string>();
   useSubscribeWheelHook((scrollDirection) =>
     setTriggerScroll(Date.now() + "," + scrollDirection)
   );
-  const [isActive, setIsActive] = useState(false);
+  const [isActive] = useState(true);
 
+  useEffect(() => {
+    if (
+      [
+        circleReference,
+        leftPaneReference,
+        rightPaneReference,
+        animationEntities,
+      ].every((ref) => ref.current !== undefined)
+    ) {
+      setup(
+        circleReference as Ref<HTMLDivElement>,
+        leftPaneReference as Ref<HTMLDivElement>,
+        rightPaneReference as Ref<HTMLDivElement>,
+        (animationEntities.current as any).entities,
+        entities.entities
+        // setAnimationEntities
+      );
+    }
+  }, [
+    animationEntities,
+    circleReference,
+    leftPaneReference,
+    rightPaneReference,
+  ]);
   React.useEffect(() => {
     if (!isActive) return;
+    if (!animationEntities.current) return;
     if (triggerScroll === undefined) return;
     if (triggerScroll.indexOf("down") > -1) {
-      if (animationEntities.isAnimating) {
-        animationEntities.userSkips = "forward";
+      if (animationEntities.current.isAnimating) {
+        animationEntities.current.userSkips = "forward";
         return;
       }
       // forward
-      if (animationEntities.cursubstage === "end") {
+      if (animationEntities.current.cursubstage === "end") {
         if (
-          animationEntities.curstage ===
-          animationEntities.entities.length - 1
+          animationEntities.current.curstage ===
+          animationEntities.current.entities.length - 1
         )
           return;
-        animationEntities.curstage++;
-        animationEntities.cursubstage = "start";
+        animationEntities.current.curstage++;
+        animationEntities.current.cursubstage = "start";
       }
-      animationEntities.isAnimating = true;
-      runAnimation(true, animationEntities);
+      animationEntities.current.isAnimating = true;
+      runAnimation(true, animationEntities.current as any);
+      console.log("test 123");
     } else {
-      if (animationEntities.isAnimating) {
-        animationEntities.userSkips = "backward";
+      if (animationEntities.current.isAnimating) {
+        animationEntities.current.userSkips = "backward";
         return;
       }
       // backward
-      if (animationEntities.cursubstage === "start") {
-        if (animationEntities.curstage === 0) return;
-        animationEntities.curstage--;
-        animationEntities.cursubstage = "end";
+      if (animationEntities.current.cursubstage === "start") {
+        if (animationEntities.current.curstage === 0) return;
+        animationEntities.current.curstage--;
+        animationEntities.current.cursubstage = "end";
       }
-      animationEntities.isAnimating = true;
-      runAnimation(false, animationEntities);
+      animationEntities.current.isAnimating = true;
+      runAnimation(false, animationEntities.current as any);
     }
-    // runAnimation(triggerScroll.indexOf("down") > -1, animationEntities);
   }, [isActive, triggerScroll]);
   return (
     <section css={sectionStyle}>

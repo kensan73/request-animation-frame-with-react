@@ -1,37 +1,35 @@
 import { AnimationEntities } from "./interfaces";
 
-function runAnimation(
+const runAnimation = (
   isForward: boolean,
-  immersiveAnimation: AnimationEntities
-) {
+  animationEntities: AnimationEntities
+): void => {
   const startTime = new Date().getTime();
 
   const step = () => {
     const curTime = new Date().getTime();
     const timeElapsed = curTime - startTime;
-    let progress = timeElapsed / immersiveAnimation.totalTime;
-    if (immersiveAnimation.userSkips !== null) {
+    let progress = timeElapsed / animationEntities.totalTime;
+    if (animationEntities.userSkips !== null) {
       if (isForward) {
         progress = 0;
-        if (immersiveAnimation.userSkips === "forward") progress = 1;
+        if (animationEntities.userSkips === "forward") progress = 1;
       } else {
         // backward
         progress = 0;
-        if (immersiveAnimation.userSkips === "backward") progress = 1;
+        if (animationEntities.userSkips === "backward") progress = 1;
       }
     }
-    immersiveAnimation.entities[immersiveAnimation.curstage].forEach(
-      (entity) => {
-        entity.step(isForward, progress, entity);
-      }
-    );
-    if (progress >= 1 || immersiveAnimation.userSkips !== null) {
-      immersiveAnimation.userSkips = null;
-      immersiveAnimation.isAnimating = false;
+    animationEntities.entities[animationEntities.curstage].forEach((entity) => {
+      entity.step(isForward, progress, entity);
+    });
+    if (progress >= 1 || animationEntities.userSkips !== null) {
+      animationEntities.userSkips = null;
+      animationEntities.isAnimating = false;
       if (isForward) {
-        immersiveAnimation.cursubstage = "end";
+        animationEntities.cursubstage = "end";
       } else {
-        immersiveAnimation.cursubstage = "start";
+        animationEntities.cursubstage = "start";
       }
       return;
     }
@@ -39,6 +37,6 @@ function runAnimation(
   };
 
   window.requestAnimationFrame(step);
-}
+};
 
 export { runAnimation };
