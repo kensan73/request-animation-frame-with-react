@@ -1,6 +1,5 @@
 import { entities, setup } from "./entities";
 import React, { Ref, useEffect, useRef, useState } from "react";
-import { runAnimation } from "./requestAnimationFrame";
 import useSubscribeWheelHook from "../hooks/useSubscribeWheelHook";
 import { circleStyle, panel0Style, panel1Style, sectionStyle } from "./styles";
 import { AnimationEntities } from "./interfaces";
@@ -28,7 +27,7 @@ const Animation: React.FC = () => {
   useAnimateOnScroll(isActive, animationEntities, triggerScroll);
   return (
     <section css={sectionStyle}>
-      <div css={circleStyle} ref={circleReference as any}></div>
+      <div css={circleStyle} ref={circleReference as any} />
       <div css={panel0Style} ref={leftPaneReference as any}>
         <h2>My header 0</h2>
       </div>

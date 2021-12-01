@@ -2,7 +2,7 @@ import { css } from "@emotion/core";
 
 const sectionStyle = css`
   display: flex;
-  height: 200px;
+  height: 500px;
   position: relative;
 `;
 
