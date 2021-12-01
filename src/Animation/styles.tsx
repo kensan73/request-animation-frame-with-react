@@ -4,6 +4,7 @@ const sectionStyle = css`
   display: flex;
   height: 500px;
   position: relative;
+  background-color: grey;
 `;
 
 const circleStyle = css`

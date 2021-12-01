@@ -5,8 +5,13 @@ import { circleStyle, panel0Style, panel1Style, sectionStyle } from "./styles";
 import { AnimationEntities } from "./interfaces";
 import useSetupReferences from "../hooks/useSetupReferences";
 import useAnimateOnScroll from "../hooks/useAnimateOnScroll";
+import useWheelCalcSectionPercentage from "../hooks/useWheelCalcSectionPercentage";
+import { useScrollToCapture } from "../hooks/useScrollToCapture";
+import useScrollDirection from "../hooks/useScrollDirection";
+import useRestoreScrollToUncapture from "../hooks/useRestoreScrollToUncapture";
 
 const Animation: React.FC = () => {
+  const sectionReference = useRef<HTMLDivElement>();
   const circleReference = useRef<HTMLDivElement>();
   const leftPaneReference = useRef<HTMLDivElement>();
   const rightPaneReference = useRef<HTMLDivElement>();
@@ -17,7 +22,17 @@ const Animation: React.FC = () => {
   useSubscribeWheelHook((scrollDirection) =>
     setTriggerScroll(Date.now() + "," + scrollDirection)
   );
-  const [isActive] = useState(true);
+  // const [isActive] = useState(true);
+  const percent = useWheelCalcSectionPercentage(sectionReference);
+  const [isActive, restoreScrollTo] = useScrollToCapture(
+    sectionReference,
+    percent
+  );
+  const scrollDirection = useScrollDirection();
+  useRestoreScrollToUncapture(isActive, () =>
+    restoreScrollTo(scrollDirection === "scrolling up" ? "up" : "down")
+  );
+
   useSetupReferences(
     circleReference,
     leftPaneReference,
@@ -26,7 +41,7 @@ const Animation: React.FC = () => {
   );
   useAnimateOnScroll(isActive, animationEntities, triggerScroll);
   return (
-    <section css={sectionStyle}>
+    <section css={sectionStyle} ref={sectionReference as any}>
       <div css={circleStyle} ref={circleReference as any} />
       <div css={panel0Style} ref={leftPaneReference as any}>
         <h2>My header 0</h2>
