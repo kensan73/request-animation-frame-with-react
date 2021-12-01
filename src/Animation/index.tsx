@@ -5,6 +5,7 @@ import useSubscribeWheelHook from "../hooks/useSubscribeWheelHook";
 import { circleStyle, panel0Style, panel1Style, sectionStyle } from "./styles";
 import { AnimationEntities } from "./interfaces";
 import useSetupReferences from "../hooks/useSetupReferences";
+import useAnimateOnScroll from "../hooks/useAnimateOnScroll";
 
 const Animation: React.FC = () => {
   const circleReference = useRef<HTMLDivElement>();
@@ -24,43 +25,7 @@ const Animation: React.FC = () => {
     rightPaneReference,
     animationEntities
   );
-  React.useEffect(() => {
-    if (!isActive) return;
-    if (!animationEntities.current) return;
-    if (triggerScroll === undefined) return;
-    if (triggerScroll.indexOf("down") > -1) {
-      if (animationEntities.current.isAnimating) {
-        animationEntities.current.userSkips = "forward";
-        return;
-      }
-      // forward
-      if (animationEntities.current.cursubstage === "end") {
-        if (
-          animationEntities.current.curstage ===
-          animationEntities.current.entities.length - 1
-        )
-          return;
-        animationEntities.current.curstage++;
-        animationEntities.current.cursubstage = "start";
-      }
-      animationEntities.current.isAnimating = true;
-      runAnimation(true, animationEntities.current as any);
-      console.log("test 123");
-    } else {
-      if (animationEntities.current.isAnimating) {
-        animationEntities.current.userSkips = "backward";
-        return;
-      }
-      // backward
-      if (animationEntities.current.cursubstage === "start") {
-        if (animationEntities.current.curstage === 0) return;
-        animationEntities.current.curstage--;
-        animationEntities.current.cursubstage = "end";
-      }
-      animationEntities.current.isAnimating = true;
-      runAnimation(false, animationEntities.current as any);
-    }
-  }, [isActive, triggerScroll]);
+  useAnimateOnScroll(isActive, animationEntities, triggerScroll);
   return (
     <section css={sectionStyle}>
       <div css={circleStyle} ref={circleReference as any}></div>
