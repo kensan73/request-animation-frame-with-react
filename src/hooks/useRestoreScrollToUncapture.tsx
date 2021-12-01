@@ -1,17 +1,17 @@
 import { useEffect } from "react";
 
 const useRestoreScrollToUncapture = (
-  isCaptured: boolean,
+  shouldRestore: boolean,
   restoreCallback: (pushAwayDirection?: "up" | "down") => void
 ): void => {
   useEffect(() => {
-    if (!isCaptured) return;
+    if (!shouldRestore) return;
 
     let handle = setTimeout(() => {
       clearTimeout(handle);
       restoreCallback();
-    }, 5000);
-  }, [isCaptured]);
+    }, 2000);
+  }, [shouldRestore]);
 };
 
 export { useRestoreScrollToUncapture };

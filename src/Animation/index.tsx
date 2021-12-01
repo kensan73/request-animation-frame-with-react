@@ -23,22 +23,27 @@ const Animation: React.FC = () => {
     setTriggerScroll(Date.now() + "," + scrollDirection)
   );
   const percent = useWheelCalcSectionPercentage(sectionReference);
-  const [isActive, restoreScrollTo] = useScrollToCapture(
+  const [isCaptured, restoreScrollTo] = useScrollToCapture(
     sectionReference,
     percent
   );
   const scrollDirection = useScrollDirection();
-  useRestoreScrollToUncapture(isActive, () =>
-    restoreScrollTo(scrollDirection === "scrolling up" ? "up" : "down")
-  );
-
   useSetupReferences(
     circleReference,
     leftPaneReference,
     rightPaneReference,
     animationEntities
   );
-  useAnimateOnScroll(isActive, animationEntities, triggerScroll);
+  const [animationsEnded, endedAtStartOrEnd] = useAnimateOnScroll(
+    isCaptured,
+    animationEntities,
+    triggerScroll
+  );
+  useRestoreScrollToUncapture(
+    isCaptured && animationsEnded,
+    () => restoreScrollTo(endedAtStartOrEnd === "start" ? "up" : "down")
+    // restoreScrollTo(scrollDirection === "scrolling up" ? "up" : "down")
+  );
   return (
     <section css={sectionStyle} ref={sectionReference as any}>
       <div css={circleStyle} ref={circleReference as any} />

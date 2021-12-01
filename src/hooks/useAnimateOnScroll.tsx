@@ -1,15 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import { runAnimation } from "../Animation/requestAnimationFrame";
 
 const useAnimateOnScroll = (
   isActive: boolean,
   animationEntities: any,
   triggerScroll: any
-) => {
+): [boolean, "start" | "end" | null] => {
+  const [animationsEnded, setAnimationsEnded] = useState(false);
+  const [endedAtStartOrEnd, setEndedAtStartOrEnd] = useState<
+    null | "start" | "end"
+  >(null);
   React.useEffect(() => {
     if (!isActive) return;
     if (!animationEntities.current) return;
     if (triggerScroll === undefined) return;
+    setAnimationsEnded(false);
     if (triggerScroll.indexOf("down") > -1) {
       if (animationEntities.current.isAnimating) {
         animationEntities.current.userSkips = "forward";
@@ -20,8 +25,11 @@ const useAnimateOnScroll = (
         if (
           animationEntities.current.curstage ===
           animationEntities.current.entities.length - 1
-        )
+        ) {
+          setEndedAtStartOrEnd("end");
+          setAnimationsEnded(true);
           return;
+        }
         animationEntities.current.curstage++;
         animationEntities.current.cursubstage = "start";
       }
@@ -35,7 +43,11 @@ const useAnimateOnScroll = (
       }
       // backward
       if (animationEntities.current.cursubstage === "start") {
-        if (animationEntities.current.curstage === 0) return;
+        if (animationEntities.current.curstage === 0) {
+          setEndedAtStartOrEnd("start");
+          setAnimationsEnded(true);
+          return;
+        }
         animationEntities.current.curstage--;
         animationEntities.current.cursubstage = "end";
       }
@@ -43,6 +55,8 @@ const useAnimateOnScroll = (
       runAnimation(false, animationEntities.current as any);
     }
   }, [isActive, triggerScroll]);
+
+  return [animationsEnded, endedAtStartOrEnd];
 };
 
 export { useAnimateOnScroll };
