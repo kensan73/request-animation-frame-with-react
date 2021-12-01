@@ -4,6 +4,7 @@ import { runAnimation } from "./requestAnimationFrame";
 import useSubscribeWheelHook from "../hooks/useSubscribeWheelHook";
 import { circleStyle, panel0Style, panel1Style, sectionStyle } from "./styles";
 import { AnimationEntities } from "./interfaces";
+import useSetupReferences from "../hooks/useSetupReferences";
 
 const Animation: React.FC = () => {
   const circleReference = useRef<HTMLDivElement>();
@@ -17,31 +18,12 @@ const Animation: React.FC = () => {
     setTriggerScroll(Date.now() + "," + scrollDirection)
   );
   const [isActive] = useState(true);
-
-  useEffect(() => {
-    if (
-      [
-        circleReference,
-        leftPaneReference,
-        rightPaneReference,
-        animationEntities,
-      ].every((ref) => ref.current !== undefined)
-    ) {
-      setup(
-        circleReference as Ref<HTMLDivElement>,
-        leftPaneReference as Ref<HTMLDivElement>,
-        rightPaneReference as Ref<HTMLDivElement>,
-        (animationEntities.current as any).entities,
-        entities.entities
-        // setAnimationEntities
-      );
-    }
-  }, [
-    animationEntities,
+  useSetupReferences(
     circleReference,
     leftPaneReference,
     rightPaneReference,
-  ]);
+    animationEntities
+  );
   React.useEffect(() => {
     if (!isActive) return;
     if (!animationEntities.current) return;
