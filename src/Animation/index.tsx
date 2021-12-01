@@ -22,7 +22,6 @@ const Animation: React.FC = () => {
   useSubscribeWheelHook((scrollDirection) =>
     setTriggerScroll(Date.now() + "," + scrollDirection)
   );
-  // const [isActive] = useState(true);
   const percent = useWheelCalcSectionPercentage(sectionReference);
   const [isActive, restoreScrollTo] = useScrollToCapture(
     sectionReference,
